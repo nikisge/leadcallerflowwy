@@ -1,0 +1,53 @@
+// Prisma schema for Lead Management System
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider  = "postgresql"
+  url       = env("POSTGRES_PRISMA_URL")
+  directUrl = env("POSTGRES_URL_NON_POOLING")
+}
+
+model Lead {
+  id              String   @id @default(uuid())
+  firmenname      String
+  ansprechpartner String
+  anrede          String?
+  telefon         String
+  email           String?
+  website         String?
+  branche         String?
+  ort             String?
+  createdAt       DateTime @default(now())
+  updatedAt       DateTime @updatedAt
+
+  // Vertriebs-Felder
+  status          String   @default("neu")
+  notizen         String?
+  produkt         String?
+  letzterAnruf    DateTime?
+  anrufVersuche   Int      @default(0)
+
+  // Relation zu Anruf-Logs
+  anrufe          Call[]
+
+  @@index([status])
+  @@index([branche])
+  @@index([telefon])
+}
+
+model Call {
+  id        String   @id @default(uuid())
+  leadId    String
+  lead      Lead     @relation(fields: [leadId], references: [id], onDelete: Cascade)
+  datum     DateTime @default(now())
+  dauer     Int?
+  ergebnis  String
+  notiz     String?
+  twilioSid String?
+
+  @@index([leadId])
+  @@index([datum])
+}
