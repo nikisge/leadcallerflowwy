@@ -76,6 +76,7 @@ export function GroupList({ onSelectGroup }: GroupListProps) {
 
   useEffect(() => {
     fetchGroups();
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
   const handleCreateGroup = async () => {

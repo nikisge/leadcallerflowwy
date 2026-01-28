@@ -41,7 +41,6 @@ import {
   Check,
 } from "lucide-react";
 import { LEAD_STATUSES, PRODUKTE, type Lead, type Group } from "@/lib/types";
-import { FolderOpen } from "lucide-react";
 import { format } from "date-fns";
 import { de } from "date-fns/locale";
 
