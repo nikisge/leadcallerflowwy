@@ -5,7 +5,7 @@ import { prisma } from "@/lib/db";
 export async function POST(request: NextRequest) {
   try {
     const body = await request.json();
-    const { leads, skipDuplicates = true } = body;
+    const { leads, skipDuplicates = true, groupId } = body;
 
     if (!leads || !Array.isArray(leads) || leads.length === 0) {
       return NextResponse.json(
@@ -52,6 +52,7 @@ export async function POST(request: NextRequest) {
             branche: lead.branche || null,
             ort: lead.ort || null,
             status: "neu",
+            groupId: groupId || null,
           },
         });
         imported++;

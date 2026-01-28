@@ -26,6 +26,19 @@ export const CALL_RESULTS = [
 
 export type CallResult = typeof CALL_RESULTS[number]["value"];
 
+// Group type
+export interface Group {
+  id: string;
+  name: string;
+  description: string | null;
+  color: string;
+  createdAt: Date;
+  updatedAt: Date;
+  _count?: {
+    leads: number;
+  };
+}
+
 // Lead type
 export interface Lead {
   id: string;
@@ -44,6 +57,8 @@ export interface Lead {
   produkt: Produkt;
   letzterAnruf: Date | null;
   anrufVersuche: number;
+  groupId: string | null;
+  group?: Group | null;
 }
 
 // Call type

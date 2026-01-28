@@ -16,6 +16,7 @@ export async function GET(request: NextRequest) {
     const branche = searchParams.get("branche");
     const produkt = searchParams.get("produkt");
     const search = searchParams.get("search");
+    const groupId = searchParams.get("groupId");
 
     // Sorting
     const sortBy = searchParams.get("sortBy") || "createdAt";
@@ -23,6 +24,11 @@ export async function GET(request: NextRequest) {
 
     // Build where clause
     const where: Record<string, unknown> = {};
+
+    if (groupId) {
+      // Special value "ungrouped" for leads without a group
+      where.groupId = groupId === "ungrouped" ? null : groupId;
+    }
 
     if (status) {
       where.status = status;
@@ -58,6 +64,7 @@ export async function GET(request: NextRequest) {
             orderBy: { datum: "desc" },
             take: 1,
           },
+          group: true,
         },
       }),
       prisma.lead.count({ where }),
@@ -99,6 +106,7 @@ export async function POST(request: NextRequest) {
         status: body.status || "neu",
         notizen: body.notizen || null,
         produkt: body.produkt || null,
+        groupId: body.groupId || null,
       },
     });
 

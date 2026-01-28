@@ -46,9 +46,10 @@ import { de } from "date-fns/locale";
 
 interface LeadTableProps {
   onSelectForCall?: (leads: Lead[]) => void;
+  groupId?: string;
 }
 
-export function LeadTable({ onSelectForCall }: LeadTableProps) {
+export function LeadTable({ onSelectForCall, groupId }: LeadTableProps) {
   const [leads, setLeads] = useState<Lead[]>([]);
   const [loading, setLoading] = useState(true);
   const [selectedIds, setSelectedIds] = useState<Set<string>>(new Set());
@@ -80,6 +81,7 @@ export function LeadTable({ onSelectForCall }: LeadTableProps) {
       if (statusFilter) params.set("status", statusFilter);
       if (brancheFilter) params.set("branche", brancheFilter);
       if (produktFilter) params.set("produkt", produktFilter);
+      if (groupId) params.set("groupId", groupId);
 
       const response = await fetch(`/api/leads?${params}`);
       if (!response.ok) {
@@ -98,7 +100,7 @@ export function LeadTable({ onSelectForCall }: LeadTableProps) {
     } finally {
       setLoading(false);
     }
-  }, [page, sortBy, sortOrder, search, statusFilter, brancheFilter, produktFilter, toast]);
+  }, [page, sortBy, sortOrder, search, statusFilter, brancheFilter, produktFilter, groupId, toast]);
 
   const fetchBranchen = async () => {
     try {

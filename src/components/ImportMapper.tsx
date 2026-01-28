@@ -1,8 +1,10 @@
 "use client";
 
-import { useState, useCallback } from "react";
+import { useState, useCallback, useEffect } from "react";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import { Input } from "@/components/ui/input";
+import { Label } from "@/components/ui/label";
 import {
   Select,
   SelectContent,
@@ -10,6 +12,13 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
+import {
+  Dialog,
+  DialogContent,
+  DialogHeader,
+  DialogTitle,
+  DialogTrigger,
+} from "@/components/ui/dialog";
 import {
   Table,
   TableBody,
@@ -20,7 +29,8 @@ import {
 } from "@/components/ui/table";
 import { Checkbox } from "@/components/ui/checkbox";
 import { useToast } from "@/hooks/use-toast";
-import { Upload, FileSpreadsheet, Check, X, Loader2 } from "lucide-react";
+import { Upload, FileSpreadsheet, Check, X, Loader2, Plus, FolderOpen } from "lucide-react";
+import type { Group } from "@/lib/types";
 import * as XLSX from "xlsx";
 
 interface ParsedData {
@@ -109,7 +119,48 @@ export function ImportMapper() {
     total: number;
   } | null>(null);
 
+  // Group selection
+  const [groups, setGroups] = useState<Group[]>([]);
+  const [selectedGroupId, setSelectedGroupId] = useState<string>("");
+  const [newGroupDialogOpen, setNewGroupDialogOpen] = useState(false);
+  const [newGroupName, setNewGroupName] = useState("");
+
   const { toast } = useToast();
+
+  // Fetch groups on mount
+  useEffect(() => {
+    fetch("/api/groups")
+      .then((res) => res.json())
+      .then((data) => setGroups(data.groups || []))
+      .catch(() => {});
+  }, []);
+
+  const createNewGroup = async () => {
+    if (!newGroupName.trim()) return;
+
+    try {
+      const response = await fetch("/api/groups", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ name: newGroupName }),
+      });
+
+      if (response.ok) {
+        const newGroup = await response.json();
+        setGroups([newGroup, ...groups]);
+        setSelectedGroupId(newGroup.id);
+        setNewGroupDialogOpen(false);
+        setNewGroupName("");
+        toast({ title: "Gruppe erstellt" });
+      }
+    } catch {
+      toast({
+        title: "Fehler",
+        description: "Gruppe konnte nicht erstellt werden",
+        variant: "destructive",
+      });
+    }
+  };
 
   const parseFile = useCallback(async (file: File) => {
     const extension = file.name.split(".").pop()?.toLowerCase();
@@ -252,6 +303,7 @@ export function ImportMapper() {
         body: JSON.stringify({
           leads: transformedLeads,
           skipDuplicates,
+          groupId: selectedGroupId || null,
         }),
       });
 
@@ -427,7 +479,58 @@ export function ImportMapper() {
 
           {/* Import Options */}
           <Card>
-            <CardContent className="pt-6">
+            <CardContent className="pt-6 space-y-4">
+              {/* Group Selection */}
+              <div className="flex items-center gap-4">
+                <div className="flex items-center gap-2">
+                  <FolderOpen className="h-4 w-4 text-muted-foreground" />
+                  <Label>Gruppe zuordnen:</Label>
+                </div>
+                <Select
+                  value={selectedGroupId || "__none__"}
+                  onValueChange={(v) => setSelectedGroupId(v === "__none__" ? "" : v)}
+                >
+                  <SelectTrigger className="w-[250px]">
+                    <SelectValue placeholder="Keine Gruppe" />
+                  </SelectTrigger>
+                  <SelectContent>
+                    <SelectItem value="__none__">Keine Gruppe</SelectItem>
+                    {groups.map((group) => (
+                      <SelectItem key={group.id} value={group.id}>
+                        {group.name}
+                      </SelectItem>
+                    ))}
+                  </SelectContent>
+                </Select>
+                <Dialog open={newGroupDialogOpen} onOpenChange={setNewGroupDialogOpen}>
+                  <DialogTrigger asChild>
+                    <Button variant="outline" size="sm">
+                      <Plus className="h-4 w-4 mr-1" />
+                      Neue Gruppe
+                    </Button>
+                  </DialogTrigger>
+                  <DialogContent>
+                    <DialogHeader>
+                      <DialogTitle>Neue Gruppe erstellen</DialogTitle>
+                    </DialogHeader>
+                    <div className="space-y-4 py-4">
+                      <div className="space-y-2">
+                        <Label htmlFor="group-name">Name</Label>
+                        <Input
+                          id="group-name"
+                          value={newGroupName}
+                          onChange={(e) => setNewGroupName(e.target.value)}
+                          placeholder="z.B. Kampagne März 2026"
+                        />
+                      </div>
+                      <Button className="w-full" onClick={createNewGroup}>
+                        Erstellen
+                      </Button>
+                    </div>
+                  </DialogContent>
+                </Dialog>
+              </div>
+
               <div className="flex items-center justify-between">
                 <div className="flex items-center gap-4">
                   <div className="flex items-center gap-2">
