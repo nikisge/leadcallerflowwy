@@ -40,7 +40,8 @@ import {
   X,
   Check,
 } from "lucide-react";
-import { LEAD_STATUSES, PRODUKTE, type Lead } from "@/lib/types";
+import { LEAD_STATUSES, PRODUKTE, type Lead, type Group } from "@/lib/types";
+import { FolderOpen } from "lucide-react";
 import { format } from "date-fns";
 import { de } from "date-fns/locale";
 
@@ -64,8 +65,17 @@ export function LeadTable({ onSelectForCall, groupId }: LeadTableProps) {
   const [totalPages, setTotalPages] = useState(1);
   const [editingNoteId, setEditingNoteId] = useState<string | null>(null);
   const [editingNoteValue, setEditingNoteValue] = useState("");
+  const [groups, setGroups] = useState<Group[]>([]);
 
   const { toast } = useToast();
+
+  // Fetch groups for bulk assignment
+  useEffect(() => {
+    fetch("/api/groups")
+      .then((res) => res.json())
+      .then((data) => setGroups(data.groups || []))
+      .catch(() => {});
+  }, []);
 
   const fetchLeads = useCallback(async () => {
     setLoading(true);
@@ -241,6 +251,29 @@ export function LeadTable({ onSelectForCall, groupId }: LeadTableProps) {
     }
   };
 
+  const handleBulkGroupChange = async (newGroupId: string) => {
+    if (selectedIds.size === 0) return;
+    try {
+      await fetch("/api/leads/bulk", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          ids: Array.from(selectedIds),
+          update: { groupId: newGroupId === "__none__" ? null : newGroupId },
+        }),
+      });
+      setSelectedIds(new Set());
+      fetchLeads();
+      toast({ title: `${selectedIds.size} Leads verschoben` });
+    } catch {
+      toast({
+        title: "Fehler",
+        description: "Leads konnten nicht verschoben werden",
+        variant: "destructive",
+      });
+    }
+  };
+
   const handleAddToCallQueue = () => {
     const selectedLeads = leads.filter((l) => selectedIds.has(l.id));
     if (onSelectForCall) {
@@ -354,6 +387,25 @@ export function LeadTable({ onSelectForCall, groupId }: LeadTableProps) {
               {LEAD_STATUSES.map((s) => (
                 <SelectItem key={s.value} value={s.value}>
                   {s.label}
+                </SelectItem>
+              ))}
+            </SelectContent>
+          </Select>
+          <Select onValueChange={handleBulkGroupChange}>
+            <SelectTrigger className="w-[180px]">
+              <SelectValue placeholder="Gruppe zuweisen" />
+            </SelectTrigger>
+            <SelectContent>
+              <SelectItem value="__none__">Keine Gruppe</SelectItem>
+              {groups.map((g) => (
+                <SelectItem key={g.id} value={g.id}>
+                  <div className="flex items-center gap-2">
+                    <div
+                      className="w-3 h-3 rounded-full"
+                      style={{ backgroundColor: g.color }}
+                    />
+                    {g.name}
+                  </div>
                 </SelectItem>
               ))}
             </SelectContent>
