@@ -1,6 +1,9 @@
 import { NextRequest, NextResponse } from "next/server";
 import { generateAccessToken } from "@/lib/twilio";
 
+// Force dynamic rendering
+export const dynamic = "force-dynamic";
+
 // GET /api/twilio/token - Generate Twilio access token
 export async function GET(request: NextRequest) {
   try {
