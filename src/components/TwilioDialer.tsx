@@ -128,9 +128,11 @@ export function TwilioDialer({ phoneNumber, onCallStart, onCallEnd }: TwilioDial
 
   const startCall = async () => {
     if (!device) {
-      // Fallback to tel: link
-      window.location.href = `tel:${phoneNumber}`;
-      onCallStart?.();
+      toast({
+        title: "Twilio nicht bereit",
+        description: "Bitte warte kurz oder lade die Seite neu",
+        variant: "destructive",
+      });
       return;
     }
 
