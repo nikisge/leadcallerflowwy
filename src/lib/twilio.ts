@@ -46,11 +46,16 @@ export function generateOutgoingTwiML(phoneNumber: string): string {
   const VoiceResponse = twilio.twiml.VoiceResponse;
   const response = new VoiceResponse();
 
+  // Clean the phone number - remove all whitespace, tabs, newlines
+  const cleanedNumber = phoneNumber.replace(/\s+/g, "").trim();
+
+  console.log("Generating TwiML for cleaned number:", cleanedNumber);
+
   response.dial(
     {
       callerId: process.env.TWILIO_PHONE_NUMBER,
     },
-    phoneNumber
+    cleanedNumber
   );
 
   return response.toString();

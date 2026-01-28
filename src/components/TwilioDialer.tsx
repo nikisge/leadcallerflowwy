@@ -184,13 +184,25 @@ export function TwilioDialer({ phoneNumber, onCallStart, onCallEnd }: TwilioDial
       return;
     }
 
+    // Clean the phone number - remove all whitespace, tabs, etc.
+    const cleanedNumber = phoneNumber.replace(/\s+/g, "").trim();
+
+    if (!cleanedNumber || !cleanedNumber.startsWith("+")) {
+      toast({
+        title: "Ungültige Telefonnummer",
+        description: "Nummer muss mit + beginnen (z.B. +49...)",
+        variant: "destructive",
+      });
+      return;
+    }
+
     setIsConnecting(true);
-    console.log("Starting call to:", phoneNumber);
+    console.log("Starting call to:", cleanedNumber);
 
     try {
       // IMPORTANT: device.connect() returns a Promise in v2 SDK!
       const call = await device.connect({
-        params: { To: phoneNumber },
+        params: { To: cleanedNumber },
       });
 
       console.log("Call object created, status:", call.status());
