@@ -274,9 +274,9 @@ export function LeadTable({ onSelectForCall }: LeadTableProps) {
         </div>
 
         <Select
-          value={statusFilter}
+          value={statusFilter || "__all__"}
           onValueChange={(v) => {
-            setStatusFilter(v);
+            setStatusFilter(v === "__all__" ? "" : v);
             setPage(1);
           }}
         >
@@ -284,7 +284,7 @@ export function LeadTable({ onSelectForCall }: LeadTableProps) {
             <SelectValue placeholder="Status" />
           </SelectTrigger>
           <SelectContent>
-            <SelectItem value="">Alle Status</SelectItem>
+            <SelectItem value="__all__">Alle Status</SelectItem>
             {LEAD_STATUSES.map((s) => (
               <SelectItem key={s.value} value={s.value}>
                 {s.label}
@@ -294,9 +294,9 @@ export function LeadTable({ onSelectForCall }: LeadTableProps) {
         </Select>
 
         <Select
-          value={brancheFilter}
+          value={brancheFilter || "__all__"}
           onValueChange={(v) => {
-            setBrancheFilter(v);
+            setBrancheFilter(v === "__all__" ? "" : v);
             setPage(1);
           }}
         >
@@ -304,7 +304,7 @@ export function LeadTable({ onSelectForCall }: LeadTableProps) {
             <SelectValue placeholder="Branche" />
           </SelectTrigger>
           <SelectContent>
-            <SelectItem value="">Alle Branchen</SelectItem>
+            <SelectItem value="__all__">Alle Branchen</SelectItem>
             {branchen.map((b) => (
               <SelectItem key={b} value={b}>
                 {b}
@@ -314,9 +314,9 @@ export function LeadTable({ onSelectForCall }: LeadTableProps) {
         </Select>
 
         <Select
-          value={produktFilter}
+          value={produktFilter || "__all__"}
           onValueChange={(v) => {
-            setProduktFilter(v);
+            setProduktFilter(v === "__all__" ? "" : v);
             setPage(1);
           }}
         >
@@ -324,7 +324,7 @@ export function LeadTable({ onSelectForCall }: LeadTableProps) {
             <SelectValue placeholder="Produkt" />
           </SelectTrigger>
           <SelectContent>
-            <SelectItem value="">Alle Produkte</SelectItem>
+            <SelectItem value="__all__">Alle Produkte</SelectItem>
             {PRODUKTE.map((p) => (
               <SelectItem key={p.value} value={p.value}>
                 {p.label}
@@ -478,14 +478,14 @@ export function LeadTable({ onSelectForCall }: LeadTableProps) {
                   </TableCell>
                   <TableCell>
                     <Select
-                      value={lead.produkt || ""}
-                      onValueChange={(v) => handleProduktChange(lead.id, v)}
+                      value={lead.produkt || "__none__"}
+                      onValueChange={(v) => handleProduktChange(lead.id, v === "__none__" ? "" : v)}
                     >
                       <SelectTrigger className="w-[120px] h-8">
                         <SelectValue placeholder="-" />
                       </SelectTrigger>
                       <SelectContent>
-                        <SelectItem value="">-</SelectItem>
+                        <SelectItem value="__none__">-</SelectItem>
                         {PRODUKTE.map((p) => (
                           <SelectItem key={p.value} value={p.value}>
                             {p.label}

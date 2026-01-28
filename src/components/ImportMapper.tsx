@@ -364,14 +364,14 @@ export function ImportMapper() {
                   <div key={header} className="space-y-2">
                     <label className="text-sm font-medium">{header}</label>
                     <Select
-                      value={mapping[header] || ""}
-                      onValueChange={(v) => handleMappingChange(header, v)}
+                      value={mapping[header] || "__none__"}
+                      onValueChange={(v) => handleMappingChange(header, v === "__none__" ? "" : v)}
                     >
                       <SelectTrigger>
                         <SelectValue placeholder="Nicht zuordnen" />
                       </SelectTrigger>
                       <SelectContent>
-                        <SelectItem value="">Nicht zuordnen</SelectItem>
+                        <SelectItem value="__none__">Nicht zuordnen</SelectItem>
                         {TARGET_FIELDS.map((field) => (
                           <SelectItem key={field.value} value={field.value}>
                             {field.label}
