@@ -1,10 +1,17 @@
 import twilio from "twilio";
 
-// Twilio Client (for server-side operations)
-export const twilioClient = twilio(
-  process.env.TWILIO_ACCOUNT_SID,
-  process.env.TWILIO_AUTH_TOKEN
-);
+// Twilio Client (for server-side operations) - lazy initialization
+let _twilioClient: ReturnType<typeof twilio> | null = null;
+
+export function getTwilioClient() {
+  if (!_twilioClient && process.env.TWILIO_ACCOUNT_SID && process.env.TWILIO_AUTH_TOKEN) {
+    _twilioClient = twilio(
+      process.env.TWILIO_ACCOUNT_SID,
+      process.env.TWILIO_AUTH_TOKEN
+    );
+  }
+  return _twilioClient;
+}
 
 // Generate access token for browser-based calling
 export function generateAccessToken(identity: string): string {

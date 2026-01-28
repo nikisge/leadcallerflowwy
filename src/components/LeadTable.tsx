@@ -86,7 +86,7 @@ export function LeadTable({ onSelectForCall }: LeadTableProps) {
 
       setLeads(data.leads);
       setTotalPages(data.pagination.totalPages);
-    } catch (_error) {
+    } catch {
       toast({
         title: "Fehler",
         description: "Leads konnten nicht geladen werden",
@@ -102,8 +102,8 @@ export function LeadTable({ onSelectForCall }: LeadTableProps) {
       const response = await fetch("/api/leads/branchen");
       const data = await response.json();
       setBranchen(data);
-    } catch (_error) {
-      console.error("Error fetching branchen:", error);
+    } catch {
+      // ignore
     }
   };
 
@@ -151,7 +151,7 @@ export function LeadTable({ onSelectForCall }: LeadTableProps) {
       });
       fetchLeads();
       toast({ title: "Status aktualisiert" });
-    } catch (_error) {
+    } catch {
       toast({
         title: "Fehler",
         description: "Status konnte nicht aktualisiert werden",
@@ -169,7 +169,7 @@ export function LeadTable({ onSelectForCall }: LeadTableProps) {
       });
       fetchLeads();
       toast({ title: "Produkt aktualisiert" });
-    } catch (_error) {
+    } catch {
       toast({
         title: "Fehler",
         description: "Produkt konnte nicht aktualisiert werden",
@@ -188,7 +188,7 @@ export function LeadTable({ onSelectForCall }: LeadTableProps) {
       setEditingNoteId(null);
       fetchLeads();
       toast({ title: "Notiz gespeichert" });
-    } catch (_error) {
+    } catch {
       toast({
         title: "Fehler",
         description: "Notiz konnte nicht gespeichert werden",
@@ -203,7 +203,7 @@ export function LeadTable({ onSelectForCall }: LeadTableProps) {
       await fetch(`/api/leads/${leadId}`, { method: "DELETE" });
       fetchLeads();
       toast({ title: "Lead gelöscht" });
-    } catch (_error) {
+    } catch {
       toast({
         title: "Fehler",
         description: "Lead konnte nicht gelöscht werden",
@@ -226,7 +226,7 @@ export function LeadTable({ onSelectForCall }: LeadTableProps) {
       setSelectedIds(new Set());
       fetchLeads();
       toast({ title: `${selectedIds.size} Leads aktualisiert` });
-    } catch (_error) {
+    } catch {
       toast({
         title: "Fehler",
         description: "Leads konnten nicht aktualisiert werden",

@@ -54,8 +54,8 @@ export function CallQueue() {
       try {
         const parsed = JSON.parse(stored);
         setQueue(parsed);
-      } catch (_error) {
-        console.error("Error parsing call queue:", error);
+      } catch {
+        console.error("Error parsing call queue");
       }
     }
 
@@ -74,7 +74,7 @@ export function CallQueue() {
           setTwilioConfigured(false);
         }
       }
-    } catch (_error) {
+    } catch {
       setTwilioConfigured(false);
     }
   };
@@ -151,7 +151,7 @@ export function CallQueue() {
       setNotiz("");
       setCallStartTime(null);
       goToNext();
-    } catch (_error) {
+    } catch {
       toast({
         title: "Fehler",
         description: "Anruf konnte nicht gespeichert werden",

@@ -104,7 +104,7 @@ export async function parseCSV(content: string): Promise<ParseResult> {
           suggestedMapping,
         });
       },
-      error: (error) => {
+      error: (error: unknown) => {
         reject(error);
       },
     });

@@ -169,8 +169,7 @@ export function ImportMapper() {
         title: "Datei geladen",
         description: `${jsonData.length} Zeilen gefunden`,
       });
-    } catch (_error) {
-      console.error("Error parsing file:", error);
+    } catch {
       toast({
         title: "Fehler",
         description: "Datei konnte nicht gelesen werden",
@@ -267,7 +266,7 @@ export function ImportMapper() {
       } else {
         throw new Error(result.error);
       }
-    } catch (_error) {
+    } catch {
       toast({
         title: "Fehler",
         description: "Import fehlgeschlagen",
