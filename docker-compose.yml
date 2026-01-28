@@ -1,0 +1,49 @@
+version: '3.8'
+
+services:
+  app:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    ports:
+      - "3000:3000"
+    environment:
+      - POSTGRES_PRISMA_URL=postgresql://postgres:${DB_PASSWORD:-changeme}@db:5432/leadcaller?schema=public
+      - POSTGRES_URL_NON_POOLING=postgresql://postgres:${DB_PASSWORD:-changeme}@db:5432/leadcaller?schema=public
+      - TWILIO_ACCOUNT_SID=${TWILIO_ACCOUNT_SID:-}
+      - TWILIO_AUTH_TOKEN=${TWILIO_AUTH_TOKEN:-}
+      - TWILIO_API_KEY_SID=${TWILIO_API_KEY_SID:-}
+      - TWILIO_API_KEY_SECRET=${TWILIO_API_KEY_SECRET:-}
+      - TWILIO_TWIML_APP_SID=${TWILIO_TWIML_APP_SID:-}
+      - TWILIO_PHONE_NUMBER=${TWILIO_PHONE_NUMBER:-}
+    depends_on:
+      db:
+        condition: service_healthy
+    restart: unless-stopped
+
+  db:
+    image: postgres:16-alpine
+    environment:
+      - POSTGRES_USER=postgres
+      - POSTGRES_PASSWORD=${DB_PASSWORD:-changeme}
+      - POSTGRES_DB=leadcaller
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U postgres"]
+      interval: 5s
+      timeout: 5s
+      retries: 5
+    restart: unless-stopped
+
+  # Optional: Adminer for database management
+  adminer:
+    image: adminer
+    ports:
+      - "8080:8080"
+    depends_on:
+      - db
+    restart: unless-stopped
+
+volumes:
+  postgres_data:

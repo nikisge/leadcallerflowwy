@@ -82,10 +82,13 @@ export function LeadTable({ onSelectForCall }: LeadTableProps) {
       if (produktFilter) params.set("produkt", produktFilter);
 
       const response = await fetch(`/api/leads?${params}`);
+      if (!response.ok) {
+        throw new Error("API error");
+      }
       const data = await response.json();
 
-      setLeads(data.leads);
-      setTotalPages(data.pagination.totalPages);
+      setLeads(data.leads || []);
+      setTotalPages(data.pagination?.totalPages || 1);
     } catch {
       toast({
         title: "Fehler",
@@ -100,8 +103,9 @@ export function LeadTable({ onSelectForCall }: LeadTableProps) {
   const fetchBranchen = async () => {
     try {
       const response = await fetch("/api/leads/branchen");
+      if (!response.ok) return;
       const data = await response.json();
-      setBranchen(data);
+      setBranchen(Array.isArray(data) ? data : []);
     } catch {
       // ignore
     }
