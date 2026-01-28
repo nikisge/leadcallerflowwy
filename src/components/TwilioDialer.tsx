@@ -24,7 +24,7 @@ type TwilioCall = {
   on: (event: string, callback: (...args: unknown[]) => void) => void;
 };
 
-type TwilioDeviceConstructor = new (token: string, options?: { codecPreferences: string[] }) => TwilioDevice;
+type TwilioDeviceConstructor = new (token: string, options?: { codecPreferences?: string[]; edge?: string }) => TwilioDevice;
 
 declare global {
   interface Window {
