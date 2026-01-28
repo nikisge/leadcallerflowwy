@@ -18,11 +18,17 @@ export function generateAccessToken(identity: string): string {
   const AccessToken = twilio.jwt.AccessToken;
   const VoiceGrant = AccessToken.VoiceGrant;
 
+  // Use IE1 region if TwiML App is in Ireland, otherwise default
+  const region = process.env.TWILIO_REGION || "ie1";
+
   const token = new AccessToken(
     process.env.TWILIO_ACCOUNT_SID!,
     process.env.TWILIO_API_KEY_SID!,
     process.env.TWILIO_API_KEY_SECRET!,
-    { identity }
+    {
+      identity,
+      region,
+    }
   );
 
   const voiceGrant = new VoiceGrant({

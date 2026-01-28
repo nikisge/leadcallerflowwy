@@ -49,7 +49,7 @@ export function TwilioDialer({ phoneNumber, onCallStart, onCallEnd }: TwilioDial
   useEffect(() => {
     if (typeof window !== "undefined" && !window.Twilio) {
       const script = document.createElement("script");
-      script.src = "https://sdk.twilio.com/js/client/v1.14/twilio.min.js";
+      script.src = "https://sdk.twilio.com/js/client/v2.1/twilio.min.js";
       script.async = true;
       script.onload = () => {
         setSdkLoaded(true);
@@ -81,6 +81,7 @@ export function TwilioDialer({ phoneNumber, onCallStart, onCallEnd }: TwilioDial
 
       const newDevice = new window.Twilio.Device(token, {
         codecPreferences: ["opus", "pcmu"],
+        edge: "dublin", // Ireland region
       });
 
       newDevice.on("ready", () => {
