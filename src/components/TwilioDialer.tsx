@@ -49,7 +49,7 @@ export function TwilioDialer({ phoneNumber, onCallStart, onCallEnd }: TwilioDial
   useEffect(() => {
     if (typeof window !== "undefined" && !window.Twilio) {
       const script = document.createElement("script");
-      script.src = "https://sdk.twilio.com/js/client/v2.1/twilio.min.js";
+      script.src = "https://cdn.jsdelivr.net/npm/@twilio/voice-sdk@2.10.2/dist/twilio.min.js";
       script.async = true;
       script.onload = () => {
         setSdkLoaded(true);
@@ -84,8 +84,8 @@ export function TwilioDialer({ phoneNumber, onCallStart, onCallEnd }: TwilioDial
         edge: "dublin", // Ireland region
       });
 
-      newDevice.on("ready", () => {
-        console.log("Twilio Device Ready");
+      newDevice.on("registered", () => {
+        console.log("Twilio Device Registered");
       });
 
       newDevice.on("error", (error: unknown) => {
@@ -95,15 +95,6 @@ export function TwilioDialer({ phoneNumber, onCallStart, onCallEnd }: TwilioDial
           description: "Twilio-Verbindung fehlgeschlagen",
           variant: "destructive",
         });
-      });
-
-      newDevice.on("disconnect", () => {
-        setIsCallActive(false);
-        activeCall.current = null;
-        if (timerRef.current) {
-          clearInterval(timerRef.current);
-        }
-        onCallEnd?.();
       });
 
       await newDevice.register();
