@@ -394,6 +394,7 @@ export function LeadTable({ onSelectForCall }: LeadTableProps) {
               </TableHead>
               <TableHead>Ansprechpartner</TableHead>
               <TableHead>Telefon</TableHead>
+              <TableHead>Website</TableHead>
               <TableHead>Branche</TableHead>
               <TableHead>Ort</TableHead>
               <TableHead
@@ -422,14 +423,14 @@ export function LeadTable({ onSelectForCall }: LeadTableProps) {
           <TableBody>
             {loading ? (
               <TableRow>
-                <TableCell colSpan={11} className="text-center py-8">
+                <TableCell colSpan={12} className="text-center py-8">
                   Laden...
                 </TableCell>
               </TableRow>
             ) : leads.length === 0 ? (
               <TableRow>
                 <TableCell
-                  colSpan={11}
+                  colSpan={12}
                   className="text-center py-8 text-muted-foreground"
                 >
                   Keine Leads gefunden
@@ -460,6 +461,20 @@ export function LeadTable({ onSelectForCall }: LeadTableProps) {
                     >
                       {lead.telefon}
                     </a>
+                  </TableCell>
+                  <TableCell>
+                    {lead.website ? (
+                      <a
+                        href={lead.website.startsWith("http") ? lead.website : `https://${lead.website}`}
+                        target="_blank"
+                        rel="noopener noreferrer"
+                        className="text-blue-600 hover:underline truncate max-w-[150px] block"
+                      >
+                        {lead.website.replace(/^https?:\/\//, "")}
+                      </a>
+                    ) : (
+                      "-"
+                    )}
                   </TableCell>
                   <TableCell>{lead.branche || "-"}</TableCell>
                   <TableCell>{lead.ort || "-"}</TableCell>

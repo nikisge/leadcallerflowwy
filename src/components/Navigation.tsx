@@ -1,13 +1,15 @@
 "use client";
 
 import Link from "next/link";
-import { usePathname } from "next/navigation";
+import { usePathname, useRouter } from "next/navigation";
 import { cn } from "@/lib/utils";
+import { Button } from "@/components/ui/button";
 import {
   Users,
   Upload,
   Phone,
   BarChart3,
+  LogOut,
 } from "lucide-react";
 
 const navItems = [
@@ -19,6 +21,18 @@ const navItems = [
 
 export function Navigation() {
   const pathname = usePathname();
+  const router = useRouter();
+
+  // Don't show navigation on login page
+  if (pathname === "/login") {
+    return null;
+  }
+
+  const handleLogout = async () => {
+    await fetch("/api/auth/logout", { method: "POST" });
+    router.push("/login");
+    router.refresh();
+  };
 
   return (
     <nav className="border-b bg-white">
@@ -50,6 +64,15 @@ export function Navigation() {
               })}
             </div>
           </div>
+          <Button
+            variant="ghost"
+            size="sm"
+            onClick={handleLogout}
+            className="text-muted-foreground hover:text-foreground"
+          >
+            <LogOut className="h-4 w-4 mr-2" />
+            Abmelden
+          </Button>
         </div>
       </div>
     </nav>
