@@ -40,8 +40,8 @@ interface ParsedData {
 }
 
 const TARGET_FIELDS = [
-  { value: "firmenname", label: "Firmenname *", required: true },
-  { value: "ansprechpartner", label: "Ansprechpartner *", required: true },
+  { value: "firmenname", label: "Firmenname", required: false },
+  { value: "ansprechpartner", label: "Ansprechpartner", required: false },
   { value: "anrede", label: "Anrede", required: false },
   { value: "telefon", label: "Telefon *", required: true },
   { value: "email", label: "E-Mail", required: false },
