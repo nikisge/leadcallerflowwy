@@ -297,6 +297,11 @@ export function ImportMapper() {
         return lead;
       });
 
+      // Debug: log what we're sending
+      console.log("=== IMPORT DEBUG ===");
+      console.log("Mapping:", mapping);
+      console.log("First 3 transformed leads:", transformedLeads.slice(0, 3));
+
       const response = await fetch("/api/import", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
@@ -339,18 +344,28 @@ export function ImportMapper() {
     <div className="space-y-6">
       {/* Import Result */}
       {importResult && (
-        <Card className="border-green-200 bg-green-50">
+        <Card className={importResult.imported > 0 ? "border-green-200 bg-green-50" : "border-red-200 bg-red-50"}>
           <CardContent className="pt-6">
             <div className="flex items-center gap-4">
-              <Check className="h-8 w-8 text-green-600" />
-              <div>
-                <h3 className="font-semibold text-green-900">
+              <Check className={`h-8 w-8 ${importResult.imported > 0 ? "text-green-600" : "text-red-600"}`} />
+              <div className="flex-1">
+                <h3 className={`font-semibold ${importResult.imported > 0 ? "text-green-900" : "text-red-900"}`}>
                   Import abgeschlossen
                 </h3>
-                <p className="text-green-700">
+                <p className={importResult.imported > 0 ? "text-green-700" : "text-red-700"}>
                   {importResult.imported} importiert, {importResult.skipped}{" "}
                   übersprungen (von {importResult.total} gesamt)
                 </p>
+                {importResult.errors && importResult.errors.length > 0 && (
+                  <div className="mt-2 text-sm text-red-600">
+                    <p className="font-medium">Fehler:</p>
+                    <ul className="list-disc list-inside max-h-32 overflow-y-auto">
+                      {importResult.errors.map((err: string, i: number) => (
+                        <li key={i}>{err}</li>
+                      ))}
+                    </ul>
+                  </div>
+                )}
               </div>
               <Button onClick={resetImport} variant="outline" className="ml-auto">
                 Neuer Import
