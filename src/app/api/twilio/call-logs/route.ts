@@ -32,8 +32,6 @@ export async function GET() {
       duration: call.duration,
       startTime: call.startTime,
       endTime: call.endTime,
-      errorCode: call.errorCode,
-      errorMessage: call.errorMessage,
       price: call.price,
       priceUnit: call.priceUnit,
     }));
