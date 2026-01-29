@@ -117,6 +117,7 @@ export function ImportMapper() {
     imported: number;
     skipped: number;
     total: number;
+    errors?: string[];
   } | null>(null);
 
   // Group selection
