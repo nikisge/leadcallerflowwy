@@ -27,7 +27,7 @@ model Group {
 model Lead {
   id              String   @id @default(uuid())
   firmenname      String
-  ansprechpartner String
+  ansprechpartner String?
   anrede          String?
   telefon         String
   email           String?
